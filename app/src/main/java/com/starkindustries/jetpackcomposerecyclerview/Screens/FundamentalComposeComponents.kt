@@ -1,16 +1,17 @@
 package com.starkindustries.jetpackcomposerecyclerview.Screens
-import android.graphics.Paint.Align
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -43,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.starkindustries.jetpackcomposerecyclerview.Data.User
 import com.starkindustries.jetpackcomposerecyclerview.R
+import com.starkindustries.jetpackcomposerecyclerview.Utility.dataProvider
 
 @Composable
 fun TextCompose(name:String,modifier: Modifier){
@@ -121,20 +123,25 @@ fun CustomTextCompose(text:String, fontSize: TextUnit, textStyle: TextStyle){
 }
 
 @Composable
-fun CustomRow(name:String,sid:String){
+fun CustomRow(user:User){
     Card(modifier = Modifier
         .fillMaxWidth()
-        .padding(10.dp),
+        .padding(10.dp)
+        .verticalScroll(rememberScrollState())
+        .height(100.dp),
         elevation = CardDefaults.cardElevation(12.dp),
         shape = RoundedCornerShape(10.dp),
         colors = CardDefaults.cardColors(Color.LightGray)) {
         Row() {
-            ImageCompose(imageId = R.drawable.batman, modifier = Modifier.padding(10.dp))
+            ImageCompose(imageId = user.imageId, modifier = Modifier
+                .padding(10.dp)
+                .weight(0.2f))
             Column(modifier = Modifier
                 .align(Alignment.CenterVertically)
-                .padding(10.dp, 0.dp, 0.dp, 0.dp)) {
-                CustomTextCompose(text = name,30.sp,MaterialTheme.typography.bodyLarge)
-                CustomTextCompose(text = sid, fontSize = 18.sp, textStyle = MaterialTheme.typography.labelSmall)
+                .padding(10.dp, 0.dp, 0.dp, 0.dp)
+                .weight(0.8f)) {
+                CustomTextCompose(text = user.name,30.sp,MaterialTheme.typography.bodyLarge)
+                CustomTextCompose(text = user.sid, fontSize = 18.sp, textStyle = MaterialTheme.typography.labelSmall)
             }
         }
     }
@@ -149,10 +156,46 @@ fun CustomTextComposeMark1(text:String,modifier:Modifier){
             .background(Color.LightGray)
     )
 }
+
+@Composable
+fun SimpleListCompose(){
+
+    var list:ArrayList<User> = ArrayList<User>()
+    list= dataProvider()
+    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+        list.forEach {
+            CustomRow(user = it)
+        }
+    }
+}
+
+@Composable
+fun LazyColumnCompose(){
+    LazyColumn(modifier = Modifier.verticalScroll(rememberScrollState()).
+    height(400.dp)) {
+        items (dataProvider()) {item->
+            CustomRow(user = item)
+        }
+    }
+}
+
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PreviewFunction(){
-
-
+LazyColumnCompose()
 }
 
+fun dataProvider():ArrayList<User>{
+    val usersList=ArrayList<User>()
+    usersList.add(User(R.drawable.batman,"Aditya","2021FHCO042"))
+    usersList.add(User(R.drawable.ironman_arc_reactor,"Sandesh","2021FHCO054"))
+    usersList.add(User(R.drawable.batman,"Mayur","2021FHCO056"))
+    usersList.add(User(R.drawable.ironman_arc_reactor,"Aaryaman","2021FHCO069"))
+    usersList.add(User(R.drawable.batman,"Piyush","2021FHCO064"))
+    usersList.add(User(R.drawable.ironman_arc_reactor,"Parth","2021FHCO042"))
+    usersList.add(User(R.drawable.batman,"Paaji","2021FHCO069"))
+    usersList.add(User(R.drawable.ironman_arc_reactor,"Kaustubh","2021FHCO010"))
+    usersList.add(User(R.drawable.batman,"Raj","2021FHCO058"))
+    usersList.add(User(R.drawable.ironman_arc_reactor,"Sammit","2021FHCO042"))
+    return usersList
+}
